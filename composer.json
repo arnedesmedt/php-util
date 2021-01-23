@@ -1,0 +1,29 @@
+{
+    "name": "arnedesmedt/php-util",
+    "type": "library",
+    "description": "PHP Utililty tools",
+    "homepage": "https://github.com/arnedesmedt/php-util",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arne De Smedt",
+            "email": "arnedesmdt@gmail.com",
+            "homepage": "https://github.com/arnedesmedt"
+        }
+    ],
+    "require": {
+        "php": "^7.4"
+    },
+    "require-dev": {
+        "phpro/grumphp": "1.*",
+        "phpstan/phpstan": "^0.12",
+        "doctrine/coding-standard": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ADS\\Util\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

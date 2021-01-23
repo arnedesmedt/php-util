@@ -1,0 +1,15 @@
+grumphp:
+    fixer:
+        enabled: true
+        fix_by_default: true
+    ascii:
+        succeeded: ~
+        failed: ~
+    tasks:
+        phpcs:
+            standard: ~
+        phpstan:
+            autoload_file: ~
+            configuration: phpstan.neon
+            level: max
+            triggered_by: ['php']
