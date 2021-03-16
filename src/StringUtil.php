@@ -32,6 +32,7 @@ final class StringUtil
     public const ENTITY_PREFIX_NAMES = [
         'Entity',
         'Model',
+        'Projection',
     ];
 
     public static function camelize(string $string, string $delimiter = '_', bool $pascal = false): string
