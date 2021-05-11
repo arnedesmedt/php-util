@@ -14,6 +14,9 @@ use function is_array;
 use function is_int;
 use function ksort;
 use function range;
+use function strlen;
+use function strpos;
+use function substr;
 
 final class ArrayUtil
 {
@@ -151,5 +154,22 @@ final class ArrayUtil
         }
 
         return ksort($array);
+    }
+
+    /**
+     * @param array<mixed> $array
+     *
+     * @return array<mixed>
+     */
+    public static function removerPrefixFromKeys(array $array, string $prefix, bool $recursive = true): array
+    {
+        return self::process(
+            $array,
+            null,
+            static fn ($value) => is_int($value) || strpos($prefix, $value) !== 0
+                ? $value
+                : substr($value, strlen($prefix)),
+            $recursive
+        );
     }
 }
