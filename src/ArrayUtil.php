@@ -161,14 +161,14 @@ final class ArrayUtil
      *
      * @return array<mixed>
      */
-    public static function removerPrefixFromKeys(array $array, string $prefix, bool $recursive = true): array
+    public static function removePrefixFromKeys(array $array, string $prefix, bool $recursive = true): array
     {
         return self::process(
             $array,
-            null,
             static fn ($value) => is_int($value) || strpos($prefix, $value) !== 0
                 ? $value
                 : substr($value, strlen($prefix)),
+            null,
             $recursive
         );
     }
