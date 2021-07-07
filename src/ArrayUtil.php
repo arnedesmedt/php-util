@@ -100,6 +100,21 @@ final class ArrayUtil
     }
 
     /**
+     * @param array<int|string, mixed> $array
+     *
+     * @return array<int|string, mixed>
+     */
+    public static function toCamelCasedValues(array $array, bool $recursive = false): array
+    {
+        return self::process(
+            $array,
+            null,
+            static fn ($value) => is_int($value) ? $value : StringUtil::camelize($value),
+            $recursive
+        );
+    }
+
+    /**
      * @param array<mixed> $array
      *
      * @return array<mixed>
