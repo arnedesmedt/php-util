@@ -23,7 +23,9 @@ use function sort;
 use function sprintf;
 use function str_replace;
 use function strpos;
+use function strrchr;
 use function strtolower;
+use function substr;
 use function trim;
 use function ucwords;
 
@@ -177,5 +179,16 @@ final class StringUtil
         sort($positions);
 
         return $positions;
+    }
+
+    public static function classBasename(string $className): string
+    {
+        $strrchr = strrchr($className, '\\');
+
+        if ($strrchr === false) {
+            return $className;
+        }
+
+        return substr($strrchr, 1);
     }
 }
