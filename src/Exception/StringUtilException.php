@@ -13,7 +13,7 @@ final class StringUtilException extends Exception
     /**
      * @return static
      */
-    public static function couldNotDecamilize(string $string)
+    public static function couldNotDecamilize(string $string): static
     {
         return new static(
             sprintf(

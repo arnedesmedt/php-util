@@ -68,10 +68,7 @@ final class StringUtil
         return strtolower(trim($trim, '-'));
     }
 
-    /**
-     * @return mixed
-     */
-    public static function castFromString(string $string)
+    public static function castFromString(string $string): mixed
     {
         switch (true) {
             case $string === 'false':
