@@ -21,8 +21,8 @@ use function preg_replace;
 use function reset;
 use function sort;
 use function sprintf;
+use function str_contains;
 use function str_replace;
-use function strpos;
 use function strrchr;
 use function strtolower;
 use function substr;
@@ -70,22 +70,13 @@ final class StringUtil
 
     public static function castFromString(string $string): mixed
     {
-        switch (true) {
-            case $string === 'false':
-                return false;
-
-            case $string === 'true':
-                return true;
-
-            case is_numeric($string) && strpos($string, '.') !== false:
-                return floatval($string);
-
-            case is_numeric($string):
-                return intval($string);
-
-            default:
-                return $string;
-        }
+        return match (true) {
+            $string === 'false' => false,
+            $string === 'true' => true,
+            is_numeric($string) && str_contains($string, '.') => floatval($string),
+            is_numeric($string) => intval($string),
+            default => $string,
+        };
     }
 
     /**

@@ -14,8 +14,8 @@ use function is_array;
 use function is_int;
 use function ksort;
 use function range;
+use function str_starts_with;
 use function strlen;
-use function strpos;
 use function substr;
 
 final class ArrayUtil
@@ -180,7 +180,7 @@ final class ArrayUtil
     {
         return self::process(
             $array,
-            static fn ($value) => is_int($value) || strpos($prefix, $value) !== 0
+            static fn ($value) => is_int($value) || ! str_starts_with($prefix, $value)
                 ? $value
                 : substr($value, strlen($prefix)),
             null,
