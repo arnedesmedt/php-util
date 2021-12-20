@@ -15,10 +15,10 @@
         "php": "^8"
     },
     "require-dev": {
-        "phpro/grumphp": "^1",
-        "phpstan/phpstan": "^1",
-        "doctrine/coding-standard": "^9",
-        "rector/rector": "^0.12.8"
+        "phpro/grumphp": "~1.0",
+        "phpstan/phpstan": "~1.0",
+        "doctrine/coding-standard": "~9.0",
+        "rector/rector": "~0.1"
     },
     "autoload": {
         "psr-4": {
