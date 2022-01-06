@@ -119,10 +119,28 @@ final class ArrayUtil
      *
      * @return array<mixed>
      */
-    public static function noNullItems(array $array, bool $recursive = true): array
+    public static function rejectNullValues(array $array, bool $recursive = true): array
     {
-        $filter = static fn ($value) => $value !== null;
+        return self::filter($array, static fn ($value) => $value !== null, $recursive);
+    }
 
+    /**
+     * @param array<mixed> $array
+     *
+     * @return array<mixed>
+     */
+    public static function rejectEmptyArrayValues(array $array, bool $recursive = true): array
+    {
+        return self::filter($array, static fn ($value) => ! is_array($value) || ! empty($value), $recursive);
+    }
+
+    /**
+     * @param array<mixed> $array
+     *
+     * @return array<mixed>
+     */
+    private static function filter(array $array, Closure $filter, bool $recursive = true): array
+    {
         return array_filter(
             self::process(
                 $array,
