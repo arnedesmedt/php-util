@@ -68,15 +68,28 @@ final class StringUtil
         return strtolower(trim($trim, '-'));
     }
 
-    public static function castFromString(string $string): mixed
+    /**
+     * @return mixed
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
+     */
+    public static function castFromString(string $string)
     {
-        return match (true) {
-            $string === 'false' => false,
-            $string === 'true' => true,
-            is_numeric($string) && str_contains($string, '.') => floatval($string),
-            is_numeric($string) => intval($string),
-            default => $string,
-        };
+        switch (true) {
+            case $string === 'false':
+                return false;
+
+            case $string === 'true':
+                return true;
+
+            case is_numeric($string) && str_contains($string, '.'):
+                return floatval($string);
+
+            case is_numeric($string):
+                return intval($string);
+        }
+
+        return $string;
     }
 
     /**

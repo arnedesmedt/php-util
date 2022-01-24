@@ -10,7 +10,12 @@ use function sprintf;
 
 final class StringUtilException extends Exception
 {
-    public static function couldNotDecamilize(string $string): static
+    /**
+     * @return static
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
+     */
+    public static function couldNotDecamilize(string $string)
     {
         return new static(
             sprintf(
