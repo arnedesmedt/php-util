@@ -70,8 +70,6 @@ final class StringUtil
 
     /**
      * @return mixed
-     *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public static function castFromString(string $string)
     {

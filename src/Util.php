@@ -12,8 +12,6 @@ final class Util
 {
     /**
      * @param mixed $value
-     *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public static function type($value): string
     {
