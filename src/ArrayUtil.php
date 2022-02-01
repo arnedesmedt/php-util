@@ -198,7 +198,7 @@ final class ArrayUtil
     {
         return self::process(
             $array,
-            static fn ($value) => is_int($value) || strpos($prefix, $value) !== 0
+            static fn ($value) => is_int($value) || strpos($value, $prefix) !== 0
                 ? $value
                 : substr($value, strlen($prefix)),
             null,
