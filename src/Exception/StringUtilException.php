@@ -12,8 +12,6 @@ final class StringUtilException extends Exception
 {
     /**
      * @return static
-     *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public static function couldNotDecamilize(string $string)
     {
