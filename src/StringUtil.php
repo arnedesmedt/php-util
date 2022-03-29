@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ADS\Util;
 
-use ADS\Util\Exception\StringUtilException;
 use RuntimeException;
 
 use function array_filter;
@@ -17,7 +16,9 @@ use function implode;
 use function intval;
 use function is_numeric;
 use function lcfirst;
+use function preg_match;
 use function preg_replace;
+use function preg_split;
 use function reset;
 use function sort;
 use function sprintf;
@@ -46,18 +47,22 @@ final class StringUtil
 
     public static function decamelize(string $string, string $delimiter = '_'): string
     {
-        $regex = [
-            '/([a-z\d])([A-Z])/',
-            sprintf('/([^%s])([A-Z][a-z])/', $delimiter),
-        ];
+        $parts = preg_split('/(?<=[a-z])(?=[A-Z])/x', $string);
 
-        $replaced = preg_replace($regex, '$1_$2', $string);
-
-        if ($replaced === null) {
-            throw StringUtilException::couldNotDecamilize($string);
+        if ($parts === false) {
+            throw new RuntimeException(
+                sprintf('Could not decamelize string \'%s\'.', $string)
+            );
         }
 
-        return strtolower($replaced);
+        $lowerParts = array_map(
+            static fn (string $part) => preg_match('/[A-Z]/', lcfirst($part))
+                ? $part
+                : lcfirst($part),
+            $parts
+        );
+
+        return implode($delimiter, $lowerParts);
     }
 
     public static function slug(string $slug): string
@@ -68,10 +73,7 @@ final class StringUtil
         return strtolower(trim($trim, '-'));
     }
 
-    /**
-     * @return mixed
-     */
-    public static function castFromString(string $string)
+    public static function castFromString(string $string): mixed
     {
         switch (true) {
             case $string === 'false':
