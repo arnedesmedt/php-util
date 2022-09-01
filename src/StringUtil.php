@@ -47,7 +47,7 @@ final class StringUtil
 
     public static function decamelize(string $string, string $delimiter = '_'): string
     {
-        $parts = preg_split('/(?<=[a-z])(?=[A-Z])/x', $string);
+        $parts = preg_split('/(?<=[a-z0-9])(?=[A-Z])/x', $string);
 
         if ($parts === false) {
             throw new RuntimeException(
