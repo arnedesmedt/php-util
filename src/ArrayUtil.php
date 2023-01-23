@@ -12,10 +12,11 @@ use function array_keys;
 use function count;
 use function is_array;
 use function is_int;
+use function is_string;
 use function ksort;
 use function range;
+use function str_starts_with;
 use function strlen;
-use function strpos;
 use function substr;
 
 final class ArrayUtil
@@ -27,9 +28,9 @@ final class ArrayUtil
      */
     private static function process(
         array $array,
-        ?Closure $keyClosure = null,
-        ?Closure $valueClosure = null,
-        bool $recursive = false
+        Closure|null $keyClosure = null,
+        Closure|null $valueClosure = null,
+        bool $recursive = false,
     ): array {
         $processedArray = [];
 
@@ -59,13 +60,15 @@ final class ArrayUtil
      *
      * @return array<int|string, mixed>
      */
-    public static function toCamelCasedKeys(array $array, bool $recursive = false): array
+    public static function toCamelCasedKeys(array $array, bool $recursive = false, string $delimiter = '_'): array
     {
         return self::process(
             $array,
-            static fn ($key) => is_int($key) ? $key : StringUtil::camelize($key),
+            static fn ($key) => is_int($key)
+                ? $key
+                : StringUtil::camelize($key, $delimiter),
             null,
-            $recursive
+            $recursive,
         );
     }
 
@@ -74,13 +77,15 @@ final class ArrayUtil
      *
      * @return array<int|string, mixed>
      */
-    public static function toSnakeCasedKeys(array $array, bool $recursive = false): array
+    public static function toCamelCasedValues(array $array, bool $recursive = false, string $delimiters = '_'): array
     {
         return self::process(
             $array,
-            static fn ($key) => is_int($key) ? $key : StringUtil::decamelize($key),
             null,
-            $recursive
+            static fn ($value) => is_string($value)
+                ? StringUtil::camelize($value, $delimiters)
+                : $value,
+            $recursive,
         );
     }
 
@@ -89,13 +94,15 @@ final class ArrayUtil
      *
      * @return array<int|string, mixed>
      */
-    public static function toSnakeCasedValues(array $array, bool $recursive = false): array
+    public static function toSnakeCasedKeys(array $array, bool $recursive = false, string $splitDelimiters = ''): array
     {
         return self::process(
             $array,
+            static fn ($key) => is_int($key)
+                ? $key
+                : StringUtil::decamelize($key, splitDelimiters: $splitDelimiters),
             null,
-            static fn ($value) => is_int($value) ? $value : StringUtil::decamelize($value),
-            $recursive
+            $recursive,
         );
     }
 
@@ -104,13 +111,18 @@ final class ArrayUtil
      *
      * @return array<int|string, mixed>
      */
-    public static function toCamelCasedValues(array $array, bool $recursive = false): array
-    {
+    public static function toSnakeCasedValues(
+        array $array,
+        bool $recursive = false,
+        string $splitDelimiters = '',
+    ): array {
         return self::process(
             $array,
             null,
-            static fn ($value) => is_int($value) ? $value : StringUtil::camelize($value),
-            $recursive
+            static fn ($value) => is_string($value)
+                ? StringUtil::decamelize($value, splitDelimiters: $splitDelimiters)
+                : $value,
+            $recursive,
         );
     }
 
@@ -149,21 +161,19 @@ final class ArrayUtil
                     if (is_array($value)) {
                         $value = array_filter(
                             $value,
-                            $filter
+                            $filter,
                         );
                     }
 
                     return $value;
                 },
-                $recursive
+                $recursive,
             ),
-            $filter
+            $filter,
         );
     }
 
-    /**
-     * @param array<mixed> $array
-     */
+    /** @param array<mixed> $array */
     public static function isAssociative(array $array): bool
     {
         if (empty($array)) {
@@ -173,9 +183,7 @@ final class ArrayUtil
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
-    /**
-     * @param array<mixed> $array
-     */
+    /** @param array<mixed> $array */
     public static function ksortRecursive(array &$array): bool
     {
         foreach ($array as &$value) {
@@ -198,11 +206,11 @@ final class ArrayUtil
     {
         return self::process(
             $array,
-            static fn ($value) => is_int($value) || strpos($value, $prefix) !== 0
+            static fn ($value) => is_int($value) || ! str_starts_with((string) $value, $prefix)
                 ? $value
-                : substr($value, strlen($prefix)),
+                : substr((string) $value, strlen($prefix)),
             null,
-            $recursive
+            $recursive,
         );
     }
 }

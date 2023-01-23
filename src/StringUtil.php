@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ADS\Util;
 
 use RuntimeException;
+use Throwable;
 
 use function array_filter;
 use function array_map;
@@ -15,20 +16,17 @@ use function floatval;
 use function implode;
 use function intval;
 use function is_numeric;
+use function json_decode;
 use function lcfirst;
 use function preg_match;
-use function preg_replace;
+use function preg_quote;
 use function preg_split;
 use function reset;
 use function sort;
 use function sprintf;
 use function str_contains;
-use function str_replace;
-use function strrchr;
-use function strtolower;
-use function substr;
-use function trim;
-use function ucwords;
+
+use const JSON_THROW_ON_ERROR;
 
 final class StringUtil
 {
@@ -38,20 +36,32 @@ final class StringUtil
         'Projection',
     ];
 
-    public static function camelize(string $string, string $delimiter = '_', bool $pascal = false): string
+    public static function camelize(string $string, string $delimiters = '_', bool $pascal = false): string
     {
-        $result = str_replace($delimiter, '', ucwords($string, $delimiter));
+        $parts = preg_split(sprintf('/[%s]/', preg_quote($delimiters, '/')), $string);
+
+        if ($parts === false) {
+            throw new RuntimeException(
+                sprintf('Could not camelize string \'%s\'.', $string),
+            );
+        }
+
+        $result = implode('', array_map('ucfirst', $parts));
 
         return $pascal ? $result : lcfirst($result);
     }
 
-    public static function decamelize(string $string, string $delimiter = '_'): string
+    public static function decamelize(string $string, string $bindDelimiter = '_', string $splitDelimiters = ''): string
     {
+        if (! empty($splitDelimiters)) {
+            $string = self::camelize($string, $splitDelimiters);
+        }
+
         $parts = preg_split('/(?<=[a-z0-9])(?=[A-Z])/x', $string);
 
         if ($parts === false) {
             throw new RuntimeException(
-                sprintf('Could not decamelize string \'%s\'.', $string)
+                sprintf('Could not decamelize string \'%s\'.', $string),
             );
         }
 
@@ -59,18 +69,10 @@ final class StringUtil
             static fn (string $part) => preg_match('/[A-Z]/', lcfirst($part))
                 ? $part
                 : lcfirst($part),
-            $parts
+            $parts,
         );
 
-        return implode($delimiter, $lowerParts);
-    }
-
-    public static function slug(string $slug): string
-    {
-        /** @var string $trim */
-        $trim = preg_replace('/[^A-Za-z0-9-]+/', '-', $slug);
-
-        return strtolower(trim($trim, '-'));
+        return implode($bindDelimiter, $lowerParts);
     }
 
     public static function castFromString(string $string): mixed
@@ -82,6 +84,9 @@ final class StringUtil
             case $string === 'true':
                 return true;
 
+            case $string === 'null':
+                return null;
+
             case is_numeric($string) && str_contains($string, '.'):
                 return floatval($string);
 
@@ -89,20 +94,22 @@ final class StringUtil
                 return intval($string);
         }
 
-        return $string;
+        try {
+            return json_decode($string, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Throwable) {
+            return $string;
+        }
     }
 
-    /**
-     * @param array|string[] $prefixes
-     */
+    /** @param array|string[] $prefixes */
     public static function entityNamespaceFromClassName(
         string $className,
-        array $prefixes = self::ENTITY_PREFIX_NAMES
+        array $prefixes = self::ENTITY_PREFIX_NAMES,
     ): string {
         $positions = self::positionsOfPrefixes($className, $prefixes);
-        $resourceNameParts = explode('\\', $className);
 
         if (! empty($positions)) {
+            $resourceNameParts = explode('\\', $className);
             $position = reset($positions);
             $namespaceParts = array_slice($resourceNameParts, 0, $position + 1);
 
@@ -116,17 +123,15 @@ final class StringUtil
         throw new RuntimeException(
             sprintf(
                 'Entity or Model name not found for class \'%s\'.',
-                $className
-            )
+                $className,
+            ),
         );
     }
 
-    /**
-     * @param array|string[] $prefixes
-     */
+    /** @param array|string[] $prefixes */
     public static function entityNameFromClassName(
         string $className,
-        array $prefixes = self::ENTITY_PREFIX_NAMES
+        array $prefixes = self::ENTITY_PREFIX_NAMES,
     ): string {
         // First try to find the short name by the class
         // Classes like *\Entity\Bank\* or *\Model\Bank\* will result in short name: Bank.
@@ -146,8 +151,8 @@ final class StringUtil
         throw new RuntimeException(
             sprintf(
                 'Entity or Model name not found for class \'%s\'.',
-                $className
-            )
+                $className,
+            ),
         );
     }
 
@@ -158,7 +163,7 @@ final class StringUtil
      */
     private static function positionsOfPrefixes(
         string $className,
-        array $prefixes = self::ENTITY_PREFIX_NAMES
+        array $prefixes = self::ENTITY_PREFIX_NAMES,
     ): array {
         $resourceNameParts = explode('\\', $className);
 
@@ -173,23 +178,13 @@ final class StringUtil
 
                     return $position;
                 },
-                $prefixes
-            )
+                $prefixes,
+            ),
+            static fn (int|null $position) => $position !== null,
         );
 
         sort($positions);
 
         return $positions;
-    }
-
-    public static function classBasename(string $className): string
-    {
-        $strrchr = strrchr($className, '\\');
-
-        if ($strrchr === false) {
-            return $className;
-        }
-
-        return substr($strrchr, 1);
     }
 }

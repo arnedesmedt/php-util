@@ -1,4 +1,4 @@
 /vendor/
 .php_cs.cache
 composer.lock
-.phpcs-cache
+.phpunit.result.cache
