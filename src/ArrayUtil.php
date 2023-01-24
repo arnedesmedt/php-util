@@ -19,6 +19,7 @@ use function str_starts_with;
 use function strlen;
 use function substr;
 
+/** @SuppressWarnings(PHPMD.BooleanArgumentFlag) */
 final class ArrayUtil
 {
     /**
@@ -30,25 +31,10 @@ final class ArrayUtil
         array $array,
         Closure|null $keyClosure = null,
         Closure|null $valueClosure = null,
-        bool $recursive = false,
     ): array {
         $processedArray = [];
 
         foreach ($array as $key => $value) {
-            if ($recursive) {
-                $isStdClass = $value instanceof stdClass;
-
-                if ($isStdClass) {
-                    $value = (array) $value;
-                }
-
-                if (is_array($value)) {
-                    $value = self::process($value, $keyClosure, $valueClosure, $recursive);
-                }
-
-                $value = $isStdClass ? (object) $value : $value;
-            }
-
             $processedArray[$keyClosure ? $keyClosure($key) : $key] = $valueClosure ? $valueClosure($value) : $value;
         }
 
@@ -60,15 +46,47 @@ final class ArrayUtil
      *
      * @return array<int|string, mixed>
      */
+    private static function processRecursive(
+        array $array,
+        Closure|null $keyClosure = null,
+        Closure|null $valueClosure = null,
+    ): array {
+        $processedArray = [];
+
+        foreach ($array as $key => $value) {
+            $isStdClass = $value instanceof stdClass;
+
+            $value = $isStdClass ? (array) $value : $value;
+
+            if (is_array($value)) {
+                $value = self::processRecursive($value, $keyClosure, $valueClosure);
+            }
+
+            $value = $isStdClass ? (object) $value : $value;
+
+            $processedArray[$keyClosure ? $keyClosure($key) : $key] = $valueClosure ? $valueClosure($value) : $value;
+        }
+
+        return $processedArray;
+    }
+
+    private static function processMethod(bool $recursive): string
+    {
+        return $recursive ? 'processRecursive' : 'process';
+    }
+
+    /**
+     * @param array<int|string, mixed> $array
+     *
+     * @return array<int|string, mixed>
+     */
     public static function toCamelCasedKeys(array $array, bool $recursive = false, string $delimiter = '_'): array
     {
-        return self::process(
+        $method = self::processMethod($recursive);
+
+        return self::{$method}(
             $array,
-            static fn ($key) => is_int($key)
-                ? $key
-                : StringUtil::camelize($key, $delimiter),
-            null,
-            $recursive,
+            static fn ($key) => is_int($key) ? $key : StringUtil::camelize($key, $delimiter),
         );
     }
 
@@ -79,13 +97,13 @@ final class ArrayUtil
      */
     public static function toCamelCasedValues(array $array, bool $recursive = false, string $delimiters = '_'): array
     {
-        return self::process(
+        $method = self::processMethod($recursive);
+
+        return self::{$method}(
             $array,
-            null,
-            static fn ($value) => is_string($value)
+            valueClosure: static fn ($value) => is_string($value)
                 ? StringUtil::camelize($value, $delimiters)
                 : $value,
-            $recursive,
         );
     }
 
@@ -96,13 +114,11 @@ final class ArrayUtil
      */
     public static function toSnakeCasedKeys(array $array, bool $recursive = false, string $splitDelimiters = ''): array
     {
-        return self::process(
+        $method = self::processMethod($recursive);
+
+        return self::{$method}(
             $array,
-            static fn ($key) => is_int($key)
-                ? $key
-                : StringUtil::decamelize($key, splitDelimiters: $splitDelimiters),
-            null,
-            $recursive,
+            static fn ($key) => is_int($key) ? $key : StringUtil::decamelize($key, splitDelimiters: $splitDelimiters),
         );
     }
 
@@ -116,13 +132,13 @@ final class ArrayUtil
         bool $recursive = false,
         string $splitDelimiters = '',
     ): array {
-        return self::process(
+        $method = self::processMethod($recursive);
+
+        return self::{$method}(
             $array,
-            null,
-            static fn ($value) => is_string($value)
+            valueClosure: static fn ($value) => is_string($value)
                 ? StringUtil::decamelize($value, splitDelimiters: $splitDelimiters)
                 : $value,
-            $recursive,
         );
     }
 
@@ -153,11 +169,12 @@ final class ArrayUtil
      */
     private static function filter(array $array, Closure $filter, bool $recursive = true): array
     {
+        $method = self::processMethod($recursive);
+
         return array_filter(
-            self::process(
+            self::{$method}(
                 $array,
-                null,
-                static function ($value) use ($filter) {
+                valueClosure: static function ($value) use ($filter) {
                     if (is_array($value)) {
                         $value = array_filter(
                             $value,
@@ -167,7 +184,6 @@ final class ArrayUtil
 
                     return $value;
                 },
-                $recursive,
             ),
             $filter,
         );
@@ -176,11 +192,7 @@ final class ArrayUtil
     /** @param array<mixed> $array */
     public static function isAssociative(array $array): bool
     {
-        if (empty($array)) {
-            return false;
-        }
-
-        return array_keys($array) !== range(0, count($array) - 1);
+        return ! empty($array) && array_keys($array) !== range(0, count($array) - 1);
     }
 
     /** @param array<mixed> $array */
@@ -204,13 +216,13 @@ final class ArrayUtil
      */
     public static function removePrefixFromKeys(array $array, string $prefix, bool $recursive = true): array
     {
-        return self::process(
+        $method = self::processMethod($recursive);
+
+        return self::{$method}(
             $array,
             static fn ($value) => is_int($value) || ! str_starts_with((string) $value, $prefix)
                 ? $value
                 : substr((string) $value, strlen($prefix)),
-            null,
-            $recursive,
         );
     }
 }

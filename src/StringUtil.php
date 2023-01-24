@@ -36,7 +36,7 @@ final class StringUtil
         'Projection',
     ];
 
-    public static function camelize(string $string, string $delimiters = '_', bool $pascal = false): string
+    public static function camelizePascalCase(string $string, string $delimiters = '_'): string
     {
         $parts = preg_split(sprintf('/[%s]/', preg_quote($delimiters, '/')), $string);
 
@@ -46,9 +46,12 @@ final class StringUtil
             );
         }
 
-        $result = implode('', array_map('ucfirst', $parts));
+        return implode('', array_map('ucfirst', $parts));
+    }
 
-        return $pascal ? $result : lcfirst($result);
+    public static function camelize(string $string, string $delimiters = '_'): string
+    {
+        return lcfirst(self::camelizePascalCase($string, $delimiters));
     }
 
     public static function decamelize(string $string, string $bindDelimiter = '_', string $splitDelimiters = ''): string

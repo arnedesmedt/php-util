@@ -18,10 +18,10 @@ class StringUtilTest extends TestCase
         $this->assertEquals('camelCase', StringUtil::camelize('camel-case', '-'));
         $this->assertEquals('camelCaseBoth', StringUtil::camelize('camel-case_both', '-_'));
         $this->assertEquals('camelCase', StringUtil::camelize('camel case', ' '));
-        $this->assertEquals('PascalCase', StringUtil::camelize('pascal_case', '_', true));
-        $this->assertEquals('PascalCase', StringUtil::camelize('pascalCase', '_', true));
-        $this->assertEquals('PascalCase', StringUtil::camelize('pascal-case', '-', true));
-        $this->assertEquals('PascalCase', StringUtil::camelize('pascal case', ' ', true));
+        $this->assertEquals('PascalCase', StringUtil::camelizePascalCase('pascal_case', '_'));
+        $this->assertEquals('PascalCase', StringUtil::camelizePascalCase('pascalCase', '_'));
+        $this->assertEquals('PascalCase', StringUtil::camelizePascalCase('pascal-case', '-'));
+        $this->assertEquals('PascalCase', StringUtil::camelizePascalCase('pascal case', ' '));
     }
 
     public function testDecamelize(): void
