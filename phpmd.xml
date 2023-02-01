@@ -10,7 +10,6 @@
         Custom PhpMd Ruleset
     </description>
 
-    <!-- Import the entire unused code rule set -->
     <rule ref="rulesets/cleancode.xml">
         <exclude name="StaticAccess"/>
     </rule>
