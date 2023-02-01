@@ -12,7 +12,6 @@ jobs:
               uses: shivammathur/setup-php@2.23.0
               with:
                   php-version: '8.1'
-                  extensions: intl, json
                   tools: composer
             - name: Cache composer dependencies
               uses: actions/cache@v3
@@ -22,7 +21,6 @@ jobs:
             - uses: php-actions/composer@v6
               with:
                   php_version: '8.1'
-                  php_extensions: intl json
                   args: --no-suggest --prefer-dist --optimize-autoloader
             - name: Run PhpCs
               run: vendor/bin/phpcs
