@@ -21,7 +21,7 @@ jobs:
             - uses: php-actions/composer@v6
               with:
                   php_version: '8.1'
-                  args: --no-suggest --prefer-dist --optimize-autoloader
+                  args: --prefer-dist --optimize-autoloader
             - name: Run PhpCs
               run: vendor/bin/phpcs
             - name: Run PhpStan
