@@ -12,5 +12,8 @@ grumphp:
             ruleset:
                 - phpmd.xml
         git_commit_message: null
-        git_branch_name: null
+        git_branch_name:
+            whitelist:
+                - "/^(feature|hotfix)\\/([A-Z]+-[0-9]+-)?.+$/"
+                - "/^(main)$/"
 
