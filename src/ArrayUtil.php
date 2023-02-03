@@ -159,7 +159,7 @@ final class ArrayUtil
      */
     public static function rejectEmptyArrayValues(array $array, bool $recursive = true): array
     {
-        return self::filter($array, static fn ($value) => ! is_array($value) || ! empty($value), $recursive);
+        return self::filter($array, static fn ($value) => ! empty($value), $recursive);
     }
 
     /**
@@ -169,10 +169,12 @@ final class ArrayUtil
      */
     private static function filter(array $array, Closure $filter, bool $recursive = true): array
     {
-        $method = self::processMethod($recursive);
+        if (! $recursive) {
+            return array_filter($array, $filter);
+        }
 
         return array_filter(
-            self::{$method}(
+            self::processRecursive(
                 $array,
                 valueClosure: static function ($value) use ($filter) {
                     if (is_array($value)) {

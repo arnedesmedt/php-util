@@ -7,223 +7,409 @@ namespace ADS\Util\Tests\Unit;
 use ADS\Util\ArrayUtil;
 use PHPUnit\Framework\TestCase;
 
-use function array_keys;
-
+/** @SuppressWarnings(PHPMD.BooleanArgumentFlag) */
 class ArrayUtilTest extends TestCase
 {
-    /** @return array<string, mixed> */
-    public function theArray(): array
+    /** @return array<string, array<string, bool|array<string, string|array<string, string>>>> */
+    public static function dataProviderCamelCaseKeys(): array
     {
         return [
-            'camel_case1' => 'camel_case',
-            'camel-case2' => 'camel-case',
-            'camelCase3' => 'camel case',
-            'camel case-both_works' => [
-                'camel_case-both works' => 'camel_case',
-                'camel-case1' => [
-                    'camel_case' => 'camel_case',
-                    'camel-case' => 'camel-case',
-                    'camel case' => 'camel case',
-                ],
-                'camel case2' => 'camelCase',
+            'test-camel-case-stays' => [
+                'input' => ['camelCase' => 'camelCase'],
+                'expected' => ['camelCase' => 'camelCase'],
+            ],
+            'test-from-snake-case' => [
+                'input' => ['snake_case' => 'snake_case'],
+                'expected' => ['snakeCase' => 'snake_case'],
+            ],
+            'test-from-kebab-case' => [
+                'input' => ['kebab-case' => 'kebab-case'],
+                'expected' => ['kebabCase' => 'kebab-case'],
+            ],
+            'test-from-space' => [
+                'input' => ['space space' => 'space space'],
+                'expected' => ['spaceSpace' => 'space space'],
+            ],
+            'test-no-recursive' => [
+                'input' => ['no-recursive' => ['no-recursive' => 'no-recursive']],
+                'expected' => ['noRecursive' => ['no-recursive' => 'no-recursive']],
+            ],
+            'test-recursive' => [
+                'input' => ['yes-recursive' => ['yes-recursive' => 'yes-recursive']],
+                'expected' => ['yesRecursive' => ['yesRecursive' => 'yes-recursive']],
+                'recursive' => true,
             ],
         ];
     }
 
-    /** @return array<string, mixed> */
-    public function filterArray(): array
+    /**
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $expected
+     *
+     * @dataProvider dataProviderCamelCaseKeys
+     */
+    public function testToCamelCasedKeys(array $input, array $expected, bool $recursive = false): void
+    {
+        $this->assertEquals($expected, ArrayUtil::toCamelCasedKeys($input, $recursive, '-_ '));
+    }
+
+    /** @return array<string, array<string, bool|array<string, string|array<string, string>>>> */
+    public static function dataProviderCamelCaseValues(): array
     {
         return [
-            'a' => null,
-            'b' => 'b',
-            'c' => [
-                'd' => null,
-                'e' => 'e',
-                'f' => 0,
-                'g' => false,
-                'h' => [],
+            'test-camel-case-stays' => [
+                'input' => ['camelCase' => 'camelCase'],
+                'expected' => ['camelCase' => 'camelCase'],
             ],
-            'd' => 0,
-            'e' => '',
-            'f' => 'false',
-            'g' => [],
+            'test-from-snake-case' => [
+                'input' => ['snake_case' => 'snake_case'],
+                'expected' => ['snake_case' => 'snakeCase'],
+            ],
+            'test-from-kebab-case' => [
+                'input' => ['kebab-case' => 'kebab-case'],
+                'expected' => ['kebab-case' => 'kebabCase'],
+            ],
+            'test-from-space' => [
+                'input' => ['space space' => 'space space'],
+                'expected' => ['space space' => 'spaceSpace'],
+            ],
+            'test-no-recursive' => [
+                'input' => ['no-recursive' => ['no-recursive' => 'no-recursive']],
+                'expected' => ['no-recursive' => ['no-recursive' => 'no-recursive']],
+            ],
+            'test-recursive' => [
+                'input' => ['yes-recursive' => ['yes-recursive' => 'yes-recursive']],
+                'expected' => ['yes-recursive' => ['yes-recursive' => 'yesRecursive']],
+                'recursive' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $expected
+     *
+     * @dataProvider dataProviderCamelCaseValues
+     */
+    public function testToCamelCasedValues(array $input, array $expected, bool $recursive = false): void
+    {
+        $this->assertEquals($expected, ArrayUtil::toCamelCasedValues($input, $recursive, '-_ '));
+    }
+
+    /** @return array<string, array<string, bool|array<string, string|array<string, string>>>> */
+    public static function dataProviderSnakeCaseKeys(): array
+    {
+        return [
+            'test-snake-case-stays' => [
+                'input' => ['snake_case' => 'snake_case'],
+                'expected' => ['snake_case' => 'snake_case'],
+            ],
+            'test-from-camel-case' => [
+                'input' => ['camelCase' => 'camelCase'],
+                'expected' => ['camel_case' => 'camelCase'],
+            ],
+            'test-from-kebab-case' => [
+                'input' => ['kebab-case' => 'kebab-case'],
+                'expected' => ['kebab_case' => 'kebab-case'],
+            ],
+            'test-from-space' => [
+                'input' => ['space space' => 'space space'],
+                'expected' => ['space_space' => 'space space'],
+            ],
+            'test-no-recursive' => [
+                'input' => ['no-recursive' => ['no-recursive' => 'no-recursive']],
+                'expected' => ['no_recursive' => ['no-recursive' => 'no-recursive']],
+            ],
+            'test-recursive' => [
+                'input' => ['yes-recursive' => ['yes-recursive' => 'yes-recursive']],
+                'expected' => ['yes_recursive' => ['yes_recursive' => 'yes-recursive']],
+                'recursive' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $expected
+     *
+     * @dataProvider dataProviderSnakeCaseKeys
+     */
+    public function testToSnakeCasedKeys(array $input, array $expected, bool $recursive = false): void
+    {
+        $this->assertEquals($expected, ArrayUtil::toSnakeCasedKeys($input, $recursive, '-_ '));
+    }
+
+    /** @return array<string, array<string, bool|array<string, string|array<string, string>>>> */
+    public static function dataProviderSnakeCaseValues(): array
+    {
+        return [
+            'test-snake-case-stays' => [
+                'input' => ['snake_case' => 'snake_case'],
+                'expected' => ['snake_case' => 'snake_case'],
+            ],
+            'test-from-camel-case' => [
+                'input' => ['camelCase' => 'camelCase'],
+                'expected' => ['camelCase' => 'camel_case'],
+            ],
+            'test-from-kebab-case' => [
+                'input' => ['kebab-case' => 'kebab-case'],
+                'expected' => ['kebab-case' => 'kebab_case'],
+            ],
+            'test-from-space' => [
+                'input' => ['space space' => 'space space'],
+                'expected' => ['space space' => 'space_space'],
+            ],
+            'test-no-recursive' => [
+                'input' => ['no-recursive' => ['no-recursive' => 'no-recursive']],
+                'expected' => ['no-recursive' => ['no-recursive' => 'no-recursive']],
+            ],
+            'test-recursive' => [
+                'input' => ['yes-recursive' => ['yes-recursive' => 'yes-recursive']],
+                'expected' => ['yes-recursive' => ['yes-recursive' => 'yes_recursive']],
+                'recursive' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $expected
+     *
+     * @dataProvider dataProviderSnakeCaseValues
+     */
+    public function testToSnakeCasedValues(array $input, array $expected, bool $recursive = false): void
+    {
+        $this->assertEquals($expected, ArrayUtil::toSnakeCasedValues($input, $recursive, '-_ '));
+    }
+
+    /** @return array<string, array<string, bool|array<mixed>>> */
+    public static function dataProviderRejectNull(): array
+    {
+        return [
+            'test-null-value' => [
+                'input' => [null],
+                'expected' => [],
+            ],
+            'test-empty-string' => [
+                'input' => [''],
+                'expected' => [''],
+            ],
+            'test-false-boolean' => [
+                'input' => [false],
+                'expected' => [false],
+            ],
+            'test-0-integer' => [
+                'input' => [0],
+                'expected' => [0],
+            ],
+            'test-empty-array' => [
+                'input' => [[]],
+                'expected' => [[]],
+            ],
+            'test-non-recursive' => [
+                'input' => ['test' => [null]],
+                'expected' => ['test' => [null]],
+            ],
+            'test-recursive' => [
+                'input' => ['test' => [null]],
+                'expected' => ['test' => []],
+                'recursive' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $expected
+     *
+     * @dataProvider dataProviderRejectNull
+     */
+    public function testRejectNullValues(array $input, array $expected, bool $recursive = false): void
+    {
+        $this->assertEquals($expected, ArrayUtil::rejectNullValues($input, $recursive));
+    }
+
+    /** @return array<string, array<string, bool|array<mixed>>> */
+    public static function dataProviderRejectEmptyArrayValues(): array
+    {
+        return [
+            'test-null-value' => [
+                'input' => [null],
+                'expected' => [],
+            ],
+            'test-empty-string' => [
+                'input' => [''],
+                'expected' => [],
+            ],
+            'test-false-boolean' => [
+                'input' => [false],
+                'expected' => [],
+            ],
+            'test-0-integer' => [
+                'input' => [0],
+                'expected' => [],
+            ],
+            'test-empty-array' => [
+                'input' => [[]],
+                'expected' => [],
+            ],
+            'test-non-recursive' => [
+                'input' => ['test' => [null]],
+                'expected' => ['test' => [null]],
+            ],
+            'test-recursive' => [
+                'input' => ['test' => [null]],
+                'expected' => [],
+                'recursive' => true,
+            ],
+            'test-recursive-with-multiple-values' => [
+                'input' => ['test' => [null, 'test']],
+                'expected' => ['test' => [1 => 'test']],
+                'recursive' => true,
+            ],
         ];
     }
 
-    public function testToCamelCasedKeys(): void
+    /**
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $expected
+     *
+     * @dataProvider dataProviderRejectEmptyArrayValues
+     */
+    public function testRejectEmptyArrayValues(array $input, array $expected, bool $recursive = false): void
     {
-        /** @var array<string, array<string, array<string, string>>> $camelCasedKeysArray */
-        $camelCasedKeysArray = ArrayUtil::toCamelCasedKeys($this->theArray(), true, '-_ ');
-
-        $this->assertEquals(
-            ['camelCase1', 'camelCase2', 'camelCase3', 'camelCaseBothWorks'],
-            array_keys($camelCasedKeysArray),
-        );
-
-        $this->assertEquals(
-            ['camelCaseBothWorks', 'camelCase1', 'camelCase2'],
-            array_keys($camelCasedKeysArray['camelCaseBothWorks']),
-        );
-
-        $this->assertEquals(
-            ['camelCase'],
-            array_keys($camelCasedKeysArray['camelCaseBothWorks']['camelCase1']),
-        );
+        $this->assertEquals($expected, ArrayUtil::rejectEmptyArrayValues($input, $recursive));
     }
 
-    public function testNotRecursiveToCamelCasedKeys(): void
+    /** @return array<string, array<string, bool|array<mixed>>> */
+    public static function dataProviderIsAssociative(): array
     {
-        /** @var array<string, array<string, array<string, string>>> $camelCasedKeysArray */
-        $camelCasedKeysArray = ArrayUtil::toCamelCasedKeys($this->theArray(), false, '-_ ');
-
-        $this->assertEquals(
-            ['camelCase1', 'camelCase2', 'camelCase3', 'camelCaseBothWorks'],
-            array_keys($camelCasedKeysArray),
-        );
-
-        $this->assertEquals(
-            ['camel_case-both works', 'camel-case1', 'camel case2'],
-            array_keys($camelCasedKeysArray['camelCaseBothWorks']),
-        );
-    }
-
-    public function testToCamelCasedValues(): void
-    {
-        /** @var array<string, array<string, array<string, string>>> $camelCasedValues */
-        $camelCasedValues = ArrayUtil::toCamelCasedValues($this->theArray(), true, '-_ ');
-
-        $this->assertEquals('camelCase', $camelCasedValues['camel_case1']);
-        $this->assertEquals('camelCase', $camelCasedValues['camel-case2']);
-        $this->assertEquals('camelCase', $camelCasedValues['camelCase3']);
-        $this->assertEquals('camelCase', $camelCasedValues['camel case-both_works']['camel_case-both works']);
-    }
-
-    public function testToSnakeCasedKeys(): void
-    {
-        /** @var array<string, array<string, array<string, string>>> $snakeCasedKeys */
-        $snakeCasedKeys = ArrayUtil::toSnakeCasedKeys($this->theArray(), true, '-_ ');
-
-        $this->assertEquals(
-            ['camel_case1', 'camel_case2', 'camel_case3', 'camel_case_both_works'],
-            array_keys($snakeCasedKeys),
-        );
-
-        $this->assertEquals(
-            ['camel_case_both_works', 'camel_case1', 'camel_case2'],
-            array_keys($snakeCasedKeys['camel_case_both_works']),
-        );
-
-        $this->assertEquals(
-            ['camel_case'],
-            array_keys($snakeCasedKeys['camel_case_both_works']['camel_case1']),
-        );
-    }
-
-    public function testNotRecursiveToSnakeCasedKeys(): void
-    {
-        /** @var array<string, array<string, array<string, string>>> $snakeCasedKeys */
-        $snakeCasedKeys = ArrayUtil::toSnakeCasedKeys($this->theArray(), false, '-_ ');
-
-        $this->assertEquals(
-            ['camel_case1', 'camel_case2', 'camel_case3', 'camel_case_both_works'],
-            array_keys($snakeCasedKeys),
-        );
-
-        $this->assertEquals(
-            ['camel_case-both works', 'camel-case1', 'camel case2'],
-            array_keys($snakeCasedKeys['camel_case_both_works']),
-        );
-    }
-
-    public function testToSnakeCasedValues(): void
-    {
-        /** @var array<string, array<string, array<string, string>>> $snakeCasedValues */
-        $snakeCasedValues = ArrayUtil::toSnakeCasedValues($this->theArray(), true, '-_ ');
-
-        $this->assertEquals('camel_case', $snakeCasedValues['camel_case1']);
-        $this->assertEquals('camel_case', $snakeCasedValues['camel-case2']);
-        $this->assertEquals('camel_case', $snakeCasedValues['camelCase3']);
-        $this->assertEquals('camel_case', $snakeCasedValues['camel case-both_works']['camel_case-both works']);
-    }
-
-    public function testRejectNullValues(): void
-    {
-        $expected = [
-            'b' => 'b',
-            'c' => [
-                'e' => 'e',
-                'f' => 0,
-                'g' => false,
-                'h' => [],
+        return [
+            'test-associative' => [
+                'input' => ['test' => 'test'],
+                'expected' => true,
             ],
-            'd' => 0,
-            'e' => '',
-            'f' => 'false',
-            'g' => [],
-        ];
-
-        $this->assertEquals($expected, ArrayUtil::rejectNullValues($this->filterArray()));
-    }
-
-    public function testRejectEmptyArrayValues(): void
-    {
-        $expected = [
-            'a' => null,
-            'b' => 'b',
-            'c' => [
-                'd' => null,
-                'e' => 'e',
-                'f' => 0,
-                'g' => false,
+            'test-non-associative' => [
+                'input' => ['test'],
+                'expected' => false,
             ],
-            'd' => 0,
-            'e' => '',
-            'f' => 'false',
-        ];
-
-        $this->assertEquals($expected, ArrayUtil::rejectEmptyArrayValues($this->filterArray()));
-    }
-
-    public function testIsAssociative(): void
-    {
-        $this->assertTrue(ArrayUtil::isAssociative(['a' => 'a', 'b' => 'b']));
-        $this->assertFalse(ArrayUtil::isAssociative(['a', 'b']));
-        $this->assertFalse(ArrayUtil::isAssociative([]));
-    }
-
-    public function testKeySortRecursive(): void
-    {
-        $test = [
-            'b' => 'a',
-            'a' => [
-                'b' => 'b',
-                'a' => 'a',
+            'test-empty' => [
+                'input' => [],
+                'expected' => false,
             ],
         ];
-
-        ArrayUtil::ksortRecursive($test);
-        $this->assertEquals(['a', 'b'], array_keys($test['a']));
     }
 
-    public function testRemovePrefixesFromKeys(): void
+    /**
+     * @param array<mixed> $input
+     *
+     * @dataProvider dataProviderIsAssociative
+     */
+    public function testIsAssociative(array $input, bool $expected): void
     {
-        /** @var array<string, array<string, array<string, mixed>>> $result */
-        $result = ArrayUtil::removePrefixFromKeys($this->theArray(), 'camel');
-
-        $this->assertEquals(
-            ['_case1', '-case2', 'Case3', ' case-both_works'],
-            array_keys($result),
-        );
-
-        $this->assertEquals(
-            ['_case-both works', '-case1', ' case2'],
-            array_keys($result[' case-both_works']),
-        );
+        $this->assertEquals($expected, ArrayUtil::isAssociative($input));
     }
 
-    public function testRemovePrefixesFromKeysWithoutPrefixes(): void
+    /** @return array<string, array<string, bool|array<mixed>>> */
+    public static function dataProviderKeySortRecursive(): array
     {
-        $result = ArrayUtil::removePrefixFromKeys(['a' => 'b'], 'camel');
-        $this->assertEquals(['a' => 'b'], $result);
+        return [
+            'test-associative-no-sort' => [
+                'input' => ['a' => 'a', 'b' => 'b', 'c' => 'c'],
+                'expected' => ['a' => 'a', 'b' => 'b', 'c' => 'c'],
+            ],
+            'test-associative-sort' => [
+                'input' => ['b' => 'b', 'c' => 'c', 'a' => 'a'],
+                'expected' => ['a' => 'a', 'b' => 'b', 'c' => 'c'],
+            ],
+            'test-associative-recursive' => [
+                'input' => ['b' => 'b', 'c' => 'c', 'a' => ['e' => 'e', 'f' => 'f', 'd' => 'd']],
+                'expected' => ['a' => ['d' => 'd', 'e' => 'e', 'f' => 'f'], 'b' => 'b', 'c' => 'c'],
+            ],
+            'test-numeric-no-sort' => [
+                'input' => [0 => 0, 1 => 1, 2 => 2],
+                'expected' => [0 => 0, 1 => 1, 2 => 2],
+            ],
+            'test-numeric-sort' => [
+                'input' => [1 => 1, 2 => 2, 0 => 0],
+                'expected' => [0 => 0, 1 => 1, 2 => 2],
+            ],
+            'test-numeric-recursive' => [
+                'input' => [1 => 1, 2 => 2, 0 => [4 => 4, 5 => 5, 3 => 3]],
+                'expected' => [0 => [3 => 3, 4 => 4, 5 => 5], 1 => 1, 2 => 2],
+            ],
+            'test-mixed-no-sort' => [
+                'input' => [0 => 0, 2 => 2, 'b' => 'b'],
+                'expected' => [0 => 0, 2 => 2, 'b' => 'b'],
+            ],
+            'test-mixed-sort' => [
+                'input' => ['b' => 'b', 2 => 2, 0 => 0],
+                'expected' => [0 => 0, 2 => 2, 'b' => 'b'],
+            ],
+            'test-mixed-recursive' => [
+                'input' => ['b' => 'b', 2 => 2, 0 => ['e' => 'e', 5 => 5, 3 => 3]],
+                'expected' => [0 => [3 => 3, 5 => 5, 'e' => 'e'], 2 => 2, 'b' => 'b'],
+            ],
+        ];
+    }
+
+    /**
+     * @param array<mixed> $input
+     * @param array<mixed> $expected
+     *
+     * @dataProvider dataProviderKeySortRecursive
+     */
+    public function testKeySortRecursive(array $input, array $expected): void
+    {
+        ArrayUtil::ksortRecursive($input);
+        $this->assertEquals($expected, $input);
+    }
+
+    /** @return array<string, array<string, bool|array<mixed>|string>> */
+    public static function dataProviderRemovePrefixesFromKeys(): array
+    {
+        return [
+            'test-remove-none' => [
+                'input' => ['test' => 'test', 'anders' => 'anders'],
+                'prefix' => 'nothing',
+                'expected' => ['test' => 'test', 'anders' => 'anders'],
+            ],
+            'test-remove-prefix' => [
+                'input' => ['testje' => 'testje', 'test' => 'test', 'anders' => 'anders'],
+                'prefix' => 'test',
+                'expected' => ['je' => 'testje', '' => 'test', 'anders' => 'anders'],
+            ],
+            'test-remove-prefix-with-numeric' => [
+                'input' => ['testje' => 'testje', 'test' => 'test', 0 => 1],
+                'prefix' => 'test',
+                'expected' => ['je' => 'testje', '' => 'test', 0 => 1],
+            ],
+            'test-remove-prefix-no-recursive' => [
+                'input' => ['testje' => 'testje', 'test' => ['testje' => 'testje', 'test' => 'test']],
+                'prefix' => 'test',
+                'expected' => ['je' => 'testje', '' => ['testje' => 'testje', 'test' => 'test']],
+            ],
+            'test-remove-prefix-recursive' => [
+                'input' => ['testje' => 'testje', 'test' => ['testje' => 'testje', 'test' => 'test']],
+                'prefix' => 'test',
+                'expected' => ['je' => 'testje', '' => ['je' => 'testje', '' => 'test']],
+                'recursive' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<mixed> $input
+     * @param array<mixed> $expected
+     *
+     * @dataProvider dataProviderRemovePrefixesFromKeys
+     */
+    public function testRemovePrefixesFromKeys(
+        array $input,
+        string $prefix,
+        array $expected,
+        bool $recursive = false,
+    ): void {
+        $this->assertEquals($expected, ArrayUtil::removePrefixFromKeys($input, $prefix, $recursive));
     }
 }
