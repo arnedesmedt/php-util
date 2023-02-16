@@ -13,9 +13,16 @@
     <!-- Import the entire unused code rule set -->
     <rule ref="./phpmd.xml">
         <exclude name="TooManyPublicMethods"/>
+        <exclude name="TooManyMethods"/>
     </rule>
 
     <rule ref="rulesets/codesize.xml/TooManyPublicMethods">
+        <properties>
+            <property name="ignorepattern" value="(^(test))i"/>
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/codesize.xml/TooManyMethods">
         <properties>
             <property name="ignorepattern" value="(^(test))i"/>
         </properties>
