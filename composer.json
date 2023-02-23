@@ -25,7 +25,11 @@
     },
     "autoload": {
         "psr-4": {
-            "ADS\\Util\\": "src/",
+            "ADS\\Util\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "ADS\\Util\\Tests\\": "tests/"
         }
     },
