@@ -15,6 +15,7 @@ use function is_int;
 use function is_string;
 use function ksort;
 use function range;
+use function str_ends_with;
 use function str_starts_with;
 use function strlen;
 use function substr;
@@ -225,6 +226,23 @@ final class ArrayUtil
             static fn ($value) => is_int($value) || ! str_starts_with((string) $value, $prefix)
                 ? $value
                 : substr((string) $value, strlen($prefix)),
+        );
+    }
+
+    /**
+     * @param array<mixed> $array
+     *
+     * @return array<mixed>
+     */
+    public static function removeSuffixFromKeys(array $array, string $suffix, bool $recursive = true): array
+    {
+        $method = self::processMethod($recursive);
+
+        return self::{$method}(
+            $array,
+            static fn ($value) => is_int($value) || ! str_ends_with((string) $value, $suffix)
+                ? $value
+                : substr((string) $value, 0, -strlen($suffix)),
         );
     }
 }

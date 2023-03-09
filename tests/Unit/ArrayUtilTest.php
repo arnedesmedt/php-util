@@ -412,4 +412,52 @@ class ArrayUtilTest extends TestCase
     ): void {
         $this->assertEquals($expected, ArrayUtil::removePrefixFromKeys($input, $prefix, $recursive));
     }
+
+    /** @return array<string, array<string, bool|array<mixed>|string>> */
+    public static function dataProviderRemoveSuffixesFromKeys(): array
+    {
+        return [
+            'test-remove-none' => [
+                'input' => ['test' => 'test', 'anders' => 'anders'],
+                'suffix' => 'nothing',
+                'expected' => ['test' => 'test', 'anders' => 'anders'],
+            ],
+            'test-remove-suffix' => [
+                'input' => ['testje' => 'testje', 'je' => 'test', 'anders' => 'anders'],
+                'suffix' => 'je',
+                'expected' => ['test' => 'testje', '' => 'test', 'anders' => 'anders'],
+            ],
+            'test-remove-suffix-with-numeric' => [
+                'input' => ['testje' => 'testje', 'je' => 'test', 0 => 1],
+                'suffix' => 'je',
+                'expected' => ['test' => 'testje', '' => 'test', 0 => 1],
+            ],
+            'test-remove-suffix-no-recursive' => [
+                'input' => ['testje' => 'testje', 'je' => ['testje' => 'testje', 'test' => 'test']],
+                'suffix' => 'je',
+                'expected' => ['test' => 'testje', '' => ['testje' => 'testje', 'test' => 'test']],
+            ],
+            'test-remove-suffix-recursive' => [
+                'input' => ['testje' => 'testje', 'je' => ['testje' => 'testje', 'je' => 'test']],
+                'suffix' => 'je',
+                'expected' => ['test' => 'testje', '' => ['test' => 'testje', '' => 'test']],
+                'recursive' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array<mixed> $input
+     * @param array<mixed> $expected
+     *
+     * @dataProvider dataProviderRemoveSuffixesFromKeys
+     */
+    public function testRemoveSuffixesFromKeys(
+        array $input,
+        string $suffix,
+        array $expected,
+        bool $recursive = false,
+    ): void {
+        $this->assertEquals($expected, ArrayUtil::removeSuffixFromKeys($input, $suffix, $recursive));
+    }
 }

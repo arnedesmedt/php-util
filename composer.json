@@ -47,6 +47,7 @@
     },
     "scripts": {
         "tests": [
+            "vendor/bin/phpcbf",
             "vendor/bin/phpcs",
             "vendor/bin/phpstan analyze --no-progress",
             "vendor/bin/phpmd src text phpmd.xml",
