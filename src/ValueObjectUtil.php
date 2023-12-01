@@ -17,7 +17,7 @@ final class ValueObjectUtil
             && is_a($data, 'ADS\ValueObjects\ValueObject')
             && method_exists($data, 'toValue')
         ) {
-            return $data->toValue(); // @phpstan-ignore-line
+            return $data->toValue();
         }
 
         return null;

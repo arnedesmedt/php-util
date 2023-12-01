@@ -17,7 +17,7 @@ final class ImmutableRecordUtil
             && is_a($data, 'EventEngine\Data\ImmutableRecord')
             && method_exists($data, 'toArray')
         ) {
-            return $data->toArray(); // @phpstan-ignore-line
+            return $data->toArray();
         }
 
         return null;
