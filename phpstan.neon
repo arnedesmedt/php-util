@@ -3,3 +3,8 @@ parameters:
     paths:
         - src
         - tests
+services:
+    -
+        class: ADS\JsonImmutableObjects\PhpStan\PropertiesExtension
+        tags:
+            - phpstan.properties.readWriteExtension
