@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ADS\Util\Tests\Unit;
 
 use ADS\Util\ScalarUtil;
-use ADS\Util\Tests\Unit\ValueObject\List\TestImmutable;
-use ADS\Util\Tests\Unit\ValueObject\String\TestString;
+use ADS\Util\Tests\Object\Immutable\TestImmutable;
+use ADS\Util\Tests\Object\ValueObject\String\TestString;
 use PHPUnit\Framework\TestCase;
 
 class ScalarUtilTest extends TestCase

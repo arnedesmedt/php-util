@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ADS\Util\Tests\Unit\ValueObject\List;
+namespace ADS\Util\Tests\Object\Immutable;
 
 use ADS\ValueObjects\HasExamples;
 use ADS\ValueObjects\Implementation\ExamplesLogic;
