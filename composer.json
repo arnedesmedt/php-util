@@ -13,11 +13,10 @@
     ],
     "require": {
         "php": "^8.2",
-        "event-engine/php-json-schema": "~0.1"
+        "event-engine/php-json-schema": "~3.0"
     },
     "require-dev" : {
         "arnedesmedt/json-immutable-objects": "~0.1",
-        "arnedesmedt/value-objects": "~0.1",
         "doctrine/coding-standard": "~11.0",
         "phpmd/phpmd": "~2.0",
         "phpro/grumphp": "~1.0",
