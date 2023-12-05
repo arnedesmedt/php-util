@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace ADS\Util\Tests\Object\Immutable;
 
-use ADS\Util\Tests\Object\Attribute\TestAttribute;
-use ADS\ValueObjects\HasExamples;
 use ADS\ValueObjects\Implementation\ExamplesLogic;
 use EventEngine\JsonSchema\JsonSchemaAwareRecord;
 use EventEngine\JsonSchema\JsonSchemaAwareRecordLogic;
 
-#[TestAttribute]
-class TestImmutable implements JsonSchemaAwareRecord, HasExamples
+class TestImmutableWithoutAttribute implements JsonSchemaAwareRecord
 {
     use JsonSchemaAwareRecordLogic;
     use ExamplesLogic;
@@ -21,15 +18,5 @@ class TestImmutable implements JsonSchemaAwareRecord, HasExamples
     public static function __type(): string
     {
         return 'myType';
-    }
-
-    public function test(): string
-    {
-        return $this->test;
-    }
-
-    public static function example(): self
-    {
-        return self::fromArray(['test' => 'test']);
     }
 }

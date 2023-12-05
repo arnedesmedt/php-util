@@ -12,7 +12,8 @@
         }
     ],
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "event-engine/php-json-schema": "~0.1"
     },
     "require-dev" : {
         "arnedesmedt/json-immutable-objects": "~0.1",

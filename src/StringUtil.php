@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ADS\Util;
 
+use LogicException;
 use RuntimeException;
 use Throwable;
 
@@ -123,7 +124,7 @@ final class StringUtil
             return implode('\\', $namespaceParts);
         }
 
-        throw new RuntimeException(
+        throw new LogicException(
             sprintf(
                 'Entity or Model name not found for class \'%s\'.',
                 $className,
@@ -151,7 +152,7 @@ final class StringUtil
             }
         }
 
-        throw new RuntimeException(
+        throw new LogicException(
             sprintf(
                 'Entity or Model name not found for class \'%s\'.',
                 $className,
