@@ -7,7 +7,7 @@ namespace ADS\Util\Tests\Unit\MetadataExtractor;
 use ADS\Util\MetadataExtractor\ClassExtractor;
 use ADS\Util\Tests\Object\Immutable\TestImmutable;
 use ADS\Util\Tests\Object\Interface\TestInterface;
-use ADS\Util\Tests\Object\ValueObject\String\TestString;
+use ADS\Util\Tests\Object\TestObject;
 use EventEngine\JsonSchema\JsonSchemaAwareRecord;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -66,7 +66,7 @@ class ClassExtractorTest extends TestCase
         $this->expectException(ReflectionException::class);
         $this->classExtractor->classFromClassAndInterface(
             TestImmutable::class,
-            TestString::class,
+            TestObject::class,
         );
     }
 }

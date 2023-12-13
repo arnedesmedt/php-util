@@ -6,12 +6,11 @@ namespace ADS\Util\Tests\Unit\MetadataExtractor;
 
 use ADS\Util\MetadataExtractor\AttributeExtractor;
 use ADS\Util\MetadataExtractor\ClassExtractor;
-use ADS\Util\MetadataExtractor\InstanceExtractor;
 use ADS\Util\MetadataExtractor\MetadataExtractor;
 use ADS\Util\Tests\Object\Attribute\TestAttribute;
-use ADS\Util\Tests\Object\Immutable\TestCollection;
 use ADS\Util\Tests\Object\Immutable\TestImmutable;
-use ADS\Util\Tests\Object\ValueObject\String\TestString;
+use ADS\Util\Tests\Object\TestObject;
+use ADS\Util\Tests\Object\TestObject2;
 use EventEngine\JsonSchema\JsonSchemaAwareRecord;
 use LogicException;
 use PHPUnit\Framework\TestCase;
@@ -26,7 +25,6 @@ class MetadataExtractorTest extends TestCase
         $this->metadataExtractor = new MetadataExtractor(
             new AttributeExtractor(),
             new ClassExtractor(),
-            new InstanceExtractor(),
         );
     }
 
@@ -34,7 +32,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->hasAttributeOrClassFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
-            [TestString::class, JsonSchemaAwareRecord::class],
+            [TestObject::class, JsonSchemaAwareRecord::class],
         );
 
         $this->assertTrue($result);
@@ -44,7 +42,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->hasAttributeOrClassFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
-            [TestString::class, TestAttribute::class],
+            [TestObject::class, TestAttribute::class],
         );
 
         $this->assertTrue($result);
@@ -54,7 +52,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->hasAttributeOrClassFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
-            [TestString::class, TestCollection::class],
+            [TestObject::class, TestObject2::class],
         );
 
         $this->assertFalse($result);
@@ -64,7 +62,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->attributeOrClassFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
-            [TestString::class, JsonSchemaAwareRecord::class],
+            [TestObject::class, JsonSchemaAwareRecord::class],
         );
 
         $this->assertEquals(TestImmutable::class, $result);
@@ -74,7 +72,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->attributeOrClassFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
-            [TestString::class, TestAttribute::class],
+            [TestObject::class, TestAttribute::class],
         );
 
         $this->assertInstanceOf(TestAttribute::class, $result);
@@ -84,7 +82,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->needAttributeOrClassFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
-            [TestString::class, TestAttribute::class],
+            [TestObject::class, TestAttribute::class],
         );
 
         $this->assertInstanceOf(TestAttribute::class, $result);
@@ -95,7 +93,7 @@ class MetadataExtractorTest extends TestCase
         $this->expectException(LogicException::class);
         $this->metadataExtractor->needAttributeOrClassFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
-            [TestString::class, TestCollection::class],
+            [TestObject::class, TestObject2::class],
         );
     }
 
@@ -104,7 +102,7 @@ class MetadataExtractorTest extends TestCase
         $metadata = $this->metadataExtractor->metadataFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
             [
-                TestString::class => static fn (TestString $testString) => $testString,
+                TestObject::class => static fn (TestObject $testObject) => $testObject,
                 TestAttribute::class => static fn (TestAttribute $testAttribute) => $testAttribute->test(),
             ],
         );
@@ -117,7 +115,7 @@ class MetadataExtractorTest extends TestCase
         $metadata = $this->metadataExtractor->needMetadataFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
             [
-                TestString::class => static fn (TestString $testString) => $testString,
+                TestObject::class => static fn (TestObject $testObject) => $testObject,
                 TestAttribute::class => static fn (TestAttribute $testAttribute) => $testAttribute->test(),
             ],
         );
@@ -131,7 +129,7 @@ class MetadataExtractorTest extends TestCase
         $this->metadataExtractor->needMetadataFromReflectionClass(
             new ReflectionClass(TestImmutable::class),
             [
-                TestString::class => static fn (TestString $testString) => $testString,
+                TestObject::class => static fn (TestObject $testObject) => $testObject,
             ],
         );
     }
@@ -140,7 +138,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->hasAttributeOrInstanceFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
-            [TestString::class, JsonSchemaAwareRecord::class],
+            [TestObject::class, JsonSchemaAwareRecord::class],
         );
 
         $this->assertTrue($result);
@@ -150,7 +148,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->hasAttributeOrInstanceFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
-            [TestString::class, TestAttribute::class],
+            [TestObject::class, TestAttribute::class],
         );
 
         $this->assertTrue($result);
@@ -160,7 +158,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->hasAttributeOrInstanceFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
-            [TestString::class, TestCollection::class],
+            [TestObject::class, TestObject2::class],
         );
 
         $this->assertFalse($result);
@@ -170,7 +168,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->attributeOrInstanceFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
-            [TestString::class, JsonSchemaAwareRecord::class],
+            [TestObject::class, JsonSchemaAwareRecord::class],
         );
 
         $this->assertInstanceOf(TestImmutable::class, $result);
@@ -180,7 +178,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->attributeOrInstanceFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
-            [TestString::class, TestAttribute::class],
+            [TestObject::class, TestAttribute::class],
         );
 
         $this->assertInstanceOf(TestAttribute::class, $result);
@@ -190,7 +188,7 @@ class MetadataExtractorTest extends TestCase
     {
         $result = $this->metadataExtractor->needAttributeOrInstanceFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
-            [TestString::class, TestAttribute::class],
+            [TestObject::class, TestAttribute::class],
         );
 
         $this->assertInstanceOf(TestAttribute::class, $result);
@@ -201,7 +199,7 @@ class MetadataExtractorTest extends TestCase
         $this->expectException(LogicException::class);
         $this->metadataExtractor->needAttributeOrInstanceFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
-            [TestString::class, TestCollection::class],
+            [TestObject::class, TestObject2::class],
         );
     }
 
@@ -210,7 +208,7 @@ class MetadataExtractorTest extends TestCase
         $metadata = $this->metadataExtractor->metadataFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
             [
-                TestString::class => static fn (TestString $testString) => $testString,
+                TestObject::class => static fn (TestObject $testObject) => $testObject,
                 TestAttribute::class => static fn (TestAttribute $testAttribute) => $testAttribute->test(),
             ],
         );
@@ -223,7 +221,7 @@ class MetadataExtractorTest extends TestCase
         $metadata = $this->metadataExtractor->needMetadataFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
             [
-                TestString::class => static fn (TestString $testString) => $testString,
+                TestObject::class => static fn (TestObject $testObject) => $testObject,
                 TestAttribute::class => static fn (TestAttribute $testAttribute) => $testAttribute->test(),
             ],
         );
@@ -237,7 +235,7 @@ class MetadataExtractorTest extends TestCase
         $this->metadataExtractor->needMetadataFromInstance(
             TestImmutable::fromArray(['test' => 'test']),
             [
-                TestString::class => static fn (TestString $testString) => $testString,
+                TestObject::class => static fn (TestObject $testObject) => $testObject,
             ],
         );
     }

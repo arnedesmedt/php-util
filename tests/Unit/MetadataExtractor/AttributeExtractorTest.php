@@ -8,7 +8,7 @@ use ADS\Util\MetadataExtractor\AttributeExtractor;
 use ADS\Util\Tests\Object\Attribute\TestAttribute;
 use ADS\Util\Tests\Object\Immutable\TestImmutable;
 use ADS\Util\Tests\Object\Immutable\TestImmutableWithoutAttribute;
-use ADS\Util\Tests\Object\ValueObject\String\TestString;
+use ADS\Util\Tests\Object\TestObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -55,7 +55,7 @@ class AttributeExtractorTest extends TestCase
     {
         $attribute = $this->attibuteExtractor->attributeInstanceFromClassAndAttribute(
             TestImmutable::class,
-            TestString::class,
+            TestObject::class,
         );
 
         $this->assertNull($attribute);
@@ -65,7 +65,7 @@ class AttributeExtractorTest extends TestCase
     {
         $attribute = $this->attibuteExtractor->attributeInstanceFromClassAndAttribute(
             TestImmutableWithoutAttribute::class,
-            TestString::class,
+            TestObject::class,
         );
 
         $this->assertNull($attribute);

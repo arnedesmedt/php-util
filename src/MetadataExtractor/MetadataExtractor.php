@@ -17,7 +17,6 @@ final class MetadataExtractor
     public function __construct(
         private readonly AttributeExtractor $attributeExtractor,
         private readonly ClassExtractor $classExtractor,
-        private readonly InstanceExtractor $instanceExtractor,
     ) {
     }
 
@@ -218,15 +217,6 @@ final class MetadataExtractor
             $attribute = null;
         }
 
-        try {
-            $instance = $this->instanceExtractor->instanceFromInstanceAndInterface(
-                $record,
-                $attributeOrClass,
-            );
-        } catch (ReflectionException) {
-            $instance = null;
-        }
-
-        return $attribute ?? $instance;
+        return $attribute ?? ($record instanceof $attributeOrClass ? $record : null);
     }
 }
