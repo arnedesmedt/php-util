@@ -19,7 +19,7 @@
     "require-dev" : {
         "arnedesmedt/json-immutable-objects": "~0.1",
         "doctrine/coding-standard": "~11.0",
-        "icanhazstring/composer-unused": "^0.8.11",
+        "icanhazstring/composer-unused": "~0.1",
         "phpmd/phpmd": "~2.0",
         "phpro/grumphp": "~2.0",
         "phpstan/phpstan": "~1.0",
