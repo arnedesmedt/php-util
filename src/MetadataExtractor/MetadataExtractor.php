@@ -10,13 +10,13 @@ use LogicException;
 use ReflectionClass;
 use ReflectionException;
 
-final class MetadataExtractor
+final readonly class MetadataExtractor
 {
     public const METADATA_NOT_FOUND = '---no-metadata-found---';
 
     public function __construct(
-        private readonly AttributeExtractor $attributeExtractor,
-        private readonly ClassExtractor $classExtractor,
+        private AttributeExtractor $attributeExtractor,
+        private ClassExtractor $classExtractor,
     ) {
     }
 
