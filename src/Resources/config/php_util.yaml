@@ -1,10 +1,7 @@
 services:
     ADS\Util\MetadataExtractor\AttributeExtractor: ~
     ADS\Util\MetadataExtractor\ClassExtractor: ~
-    ADS\Util\MetadataExtractor\InstanceExtractor: ~
-    ADS\Util\MetadataExtractor\JsonSchemaExtractor: ~
     ADS\Util\MetadataExtractor\MetadataExtractor:
         arguments:
             - '@ADS\Util\MetadataExtractor\AttributeExtractor'
             - '@ADS\Util\MetadataExtractor\ClassExtractor'
-            - '@ADS\Util\MetadataExtractor\InstanceExtractor'
