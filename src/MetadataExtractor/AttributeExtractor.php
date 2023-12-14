@@ -23,15 +23,28 @@ final class AttributeExtractor
         ReflectionClass $reflectionClass,
         string $attributeClass,
     ): object|null {
+        return $this->attributeFromReflectionClassAndAttribute($reflectionClass, $attributeClass)?->newInstance();
+    }
+
+    /**
+     * @param ReflectionClass<object> $reflectionClass
+     * @param class-string<T>         $attributeClass
+     *
+     * @return ReflectionAttribute<T>|null
+     *
+     * @template T of object
+     */
+    public function attributeFromReflectionClassAndAttribute(
+        ReflectionClass $reflectionClass,
+        string $attributeClass,
+    ): ReflectionAttribute|null {
         $attributes = $reflectionClass->getAttributes($attributeClass, ReflectionAttribute::IS_INSTANCEOF);
 
         if (empty($attributes)) {
             return null;
         }
 
-        $attribute = reset($attributes);
-
-        return $attribute->newInstance();
+        return reset($attributes);
     }
 
     /**
