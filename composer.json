@@ -14,7 +14,7 @@
     "require": {
         "php": "^8.2",
         "event-engine/php-json-schema": "~3.0",
-        "symfony/http-kernel": "~6.0"
+        "symfony/http-kernel": "~6.0 || ~7.0"
     },
     "require-dev" : {
         "arnedesmedt/json-immutable-objects": "~0.1",
