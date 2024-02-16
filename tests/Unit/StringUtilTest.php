@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ADS\Util\Tests\Unit;
 
 use ADS\Util\StringUtil;
+use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -96,6 +97,14 @@ class StringUtilTest extends TestCase
     public function testCamelizePascal(string $input, string $expected, string $delimiter = '_'): void
     {
         $this->assertEquals($expected, StringUtil::camelizePascalCase($input, $delimiter));
+    }
+
+    public function testEmptyDelimiterWithCamelizePascal(): void
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Delimiters cannot be empty.');
+
+        StringUtil::camelizePascalCase('test', '');
     }
 
     /** @return array<string, array<string, string>> */

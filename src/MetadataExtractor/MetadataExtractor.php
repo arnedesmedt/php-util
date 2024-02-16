@@ -10,13 +10,13 @@ use LogicException;
 use ReflectionClass;
 use ReflectionException;
 
-final readonly class MetadataExtractor
+final class MetadataExtractor
 {
     public const METADATA_NOT_FOUND = '---no-metadata-found---';
 
     public function __construct(
-        private AttributeExtractor $attributeExtractor,
-        private ClassExtractor $classExtractor,
+        private readonly AttributeExtractor $attributeExtractor,
+        private readonly ClassExtractor $classExtractor,
     ) {
     }
 
@@ -182,25 +182,23 @@ final readonly class MetadataExtractor
         ReflectionClass $reflectionClass,
         string $attributeOrClass,
     ): string|object|null {
+        $attribute = $this->attributeExtractor->attributeInstanceFromReflectionClassAndAttribute(
+            $reflectionClass,
+            $attributeOrClass,
+        );
+
+        if ($attribute !== null) {
+            return $attribute;
+        }
+
         try {
-            $attribute = $this->attributeExtractor->attributeInstanceFromReflectionClassAndAttribute(
+            return $this->classExtractor->classFromReflectionClassAndInterface(
                 $reflectionClass,
                 $attributeOrClass,
             );
         } catch (ReflectionException) {
-            $attribute = null;
+            return null;
         }
-
-        try {
-            $class = $this->classExtractor->classFromReflectionClassAndInterface(
-                $reflectionClass,
-                $attributeOrClass,
-            );
-        } catch (ReflectionException) {
-            $class = null;
-        }
-
-        return $attribute ?? $class;
     }
 
     /** @param class-string $attributeOrClass */
@@ -208,15 +206,15 @@ final readonly class MetadataExtractor
         JsonSchemaAwareRecord $record,
         string $attributeOrClass,
     ): object|null {
-        try {
-            $attribute = $this->attributeExtractor->attributeInstanceFromInstanceAndAttribute(
-                $record,
-                $attributeOrClass,
-            );
-        } catch (ReflectionException) {
-            $attribute = null;
+        $attribute = $this->attributeExtractor->attributeInstanceFromInstanceAndAttribute(
+            $record,
+            $attributeOrClass,
+        );
+
+        if ($attribute !== null) {
+            return $attribute;
         }
 
-        return $attribute ?? ($record instanceof $attributeOrClass ? $record : null);
+        return $record instanceof $attributeOrClass ? $record : null;
     }
 }
