@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ADS\Util\Tests\Unit;
 
 use ADS\Util\StringUtil;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class StringUtilTest extends TestCase
@@ -47,7 +48,7 @@ class StringUtilTest extends TestCase
         ];
     }
 
-    /** @dataProvider dataProviderCamelize */
+    #[DataProvider('dataProviderCamelize')]
     public function testCamelize(string $input, string $expected, string $delimiter = '_'): void
     {
         $this->assertEquals($expected, StringUtil::camelize($input, $delimiter));
@@ -91,7 +92,7 @@ class StringUtilTest extends TestCase
         ];
     }
 
-    /** @dataProvider dataProviderCamelizePascal */
+    #[DataProvider('dataProviderCamelizePascal')]
     public function testCamelizePascal(string $input, string $expected, string $delimiter = '_'): void
     {
         $this->assertEquals($expected, StringUtil::camelizePascalCase($input, $delimiter));
@@ -146,7 +147,7 @@ class StringUtilTest extends TestCase
         ];
     }
 
-    /** @dataProvider dataProviderDecamelize */
+    #[DataProvider('dataProviderDecamelize')]
     public function testDecamelize(
         string $input,
         string $expected,
@@ -195,7 +196,7 @@ class StringUtilTest extends TestCase
         ];
     }
 
-    /** @dataProvider dataProviderCastFromString */
+    #[DataProvider('dataProviderCastFromString')]
     public function testCastFromString(string $input, mixed $expected): void
     {
         $this->assertEquals($expected, StringUtil::castFromString($input));

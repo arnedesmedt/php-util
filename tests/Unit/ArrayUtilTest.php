@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ADS\Util\Tests\Unit;
 
 use ADS\Util\ArrayUtil;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /** @SuppressWarnings(PHPMD.BooleanArgumentFlag) */
@@ -45,9 +46,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<string, mixed> $input
      * @param array<string, mixed> $expected
-     *
-     * @dataProvider dataProviderCamelCaseKeys
      */
+    #[DataProvider('dataProviderCamelCaseKeys')]
     public function testToCamelCasedKeys(array $input, array $expected, bool $recursive = false): void
     {
         $this->assertEquals($expected, ArrayUtil::toCamelCasedKeys($input, $recursive, '-_ '));
@@ -88,9 +88,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<string, mixed> $input
      * @param array<string, mixed> $expected
-     *
-     * @dataProvider dataProviderCamelCaseValues
      */
+    #[DataProvider('dataProviderCamelCaseValues')]
     public function testToCamelCasedValues(array $input, array $expected, bool $recursive = false): void
     {
         $this->assertEquals($expected, ArrayUtil::toCamelCasedValues($input, $recursive, '-_ '));
@@ -131,9 +130,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<string, mixed> $input
      * @param array<string, mixed> $expected
-     *
-     * @dataProvider dataProviderSnakeCaseKeys
      */
+    #[DataProvider('dataProviderSnakeCaseKeys')]
     public function testToSnakeCasedKeys(array $input, array $expected, bool $recursive = false): void
     {
         $this->assertEquals($expected, ArrayUtil::toSnakeCasedKeys($input, $recursive, '-_ '));
@@ -174,9 +172,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<string, mixed> $input
      * @param array<string, mixed> $expected
-     *
-     * @dataProvider dataProviderSnakeCaseValues
      */
+    #[DataProvider('dataProviderSnakeCaseValues')]
     public function testToSnakeCasedValues(array $input, array $expected, bool $recursive = false): void
     {
         $this->assertEquals($expected, ArrayUtil::toSnakeCasedValues($input, $recursive, '-_ '));
@@ -221,9 +218,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<string, mixed> $input
      * @param array<string, mixed> $expected
-     *
-     * @dataProvider dataProviderRejectNull
      */
+    #[DataProvider('dataProviderRejectNull')]
     public function testRejectNullValues(array $input, array $expected, bool $recursive = false): void
     {
         $this->assertEquals($expected, ArrayUtil::rejectNullValues($input, $recursive));
@@ -273,9 +269,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<string, mixed> $input
      * @param array<string, mixed> $expected
-     *
-     * @dataProvider dataProviderRejectEmptyArrayValues
      */
+    #[DataProvider('dataProviderRejectEmptyArrayValues')]
     public function testRejectEmptyArrayValues(array $input, array $expected, bool $recursive = false): void
     {
         $this->assertEquals($expected, ArrayUtil::rejectEmptyArrayValues($input, $recursive));
@@ -300,11 +295,8 @@ class ArrayUtilTest extends TestCase
         ];
     }
 
-    /**
-     * @param array<mixed> $input
-     *
-     * @dataProvider dataProviderIsAssociative
-     */
+    /** @param array<mixed> $input */
+    #[DataProvider('dataProviderIsAssociative')]
     public function testIsAssociative(array $input, bool $expected): void
     {
         $this->assertEquals($expected, ArrayUtil::isAssociative($input));
@@ -356,9 +348,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<mixed> $input
      * @param array<mixed> $expected
-     *
-     * @dataProvider dataProviderKeySortRecursive
      */
+    #[DataProvider('dataProviderKeySortRecursive')]
     public function testKeySortRecursive(array $input, array $expected): void
     {
         ArrayUtil::ksortRecursive($input);
@@ -401,9 +392,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<mixed> $input
      * @param array<mixed> $expected
-     *
-     * @dataProvider dataProviderRemovePrefixesFromKeys
      */
+    #[DataProvider('dataProviderRemovePrefixesFromKeys')]
     public function testRemovePrefixesFromKeys(
         array $input,
         string $prefix,
@@ -449,9 +439,8 @@ class ArrayUtilTest extends TestCase
     /**
      * @param array<mixed> $input
      * @param array<mixed> $expected
-     *
-     * @dataProvider dataProviderRemoveSuffixesFromKeys
      */
+    #[DataProvider('dataProviderRemoveSuffixesFromKeys')]
     public function testRemoveSuffixesFromKeys(
         array $input,
         string $suffix,
