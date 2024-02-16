@@ -182,25 +182,23 @@ final class MetadataExtractor
         ReflectionClass $reflectionClass,
         string $attributeOrClass,
     ): string|object|null {
+        $attribute = $this->attributeExtractor->attributeInstanceFromReflectionClassAndAttribute(
+            $reflectionClass,
+            $attributeOrClass,
+        );
+
+        if ($attribute !== null) {
+            return $attribute;
+        }
+
         try {
-            $attribute = $this->attributeExtractor->attributeInstanceFromReflectionClassAndAttribute(
+            return $this->classExtractor->classFromReflectionClassAndInterface(
                 $reflectionClass,
                 $attributeOrClass,
             );
         } catch (ReflectionException) {
-            $attribute = null;
+            return null;
         }
-
-        try {
-            $class = $this->classExtractor->classFromReflectionClassAndInterface(
-                $reflectionClass,
-                $attributeOrClass,
-            );
-        } catch (ReflectionException) {
-            $class = null;
-        }
-
-        return $attribute ?? $class;
     }
 
     /** @param class-string $attributeOrClass */
@@ -208,15 +206,15 @@ final class MetadataExtractor
         JsonSchemaAwareRecord $record,
         string $attributeOrClass,
     ): object|null {
-        try {
-            $attribute = $this->attributeExtractor->attributeInstanceFromInstanceAndAttribute(
-                $record,
-                $attributeOrClass,
-            );
-        } catch (ReflectionException) {
-            $attribute = null;
+        $attribute = $this->attributeExtractor->attributeInstanceFromInstanceAndAttribute(
+            $record,
+            $attributeOrClass,
+        );
+
+        if ($attribute !== null) {
+            return $attribute;
         }
 
-        return $attribute ?? ($record instanceof $attributeOrClass ? $record : null);
+        return $record instanceof $attributeOrClass ? $record : null;
     }
 }

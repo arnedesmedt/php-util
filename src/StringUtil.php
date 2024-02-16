@@ -39,6 +39,12 @@ final class StringUtil
 
     public static function camelizePascalCase(string $string, string $delimiters = '_'): string
     {
+        if (empty($delimiters)) {
+            throw new LogicException(
+                'Delimiters cannot be empty.',
+            );
+        }
+
         $parts = preg_split(sprintf('/[%s]/', preg_quote($delimiters, '/')), $string);
 
         if ($parts === false) {
